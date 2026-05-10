@@ -10,18 +10,22 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.FRONTEND_URL,
-].filter(Boolean);
-
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (mobile apps, Postman, curl)
+      if (!origin) return callback(null, true);
+
+      const allowed =
+        origin === "http://localhost:5173" ||
+        origin === "http://localhost:3000" ||
+        origin.endsWith(".vercel.app") ||
+        origin === process.env.FRONTEND_URL;
+
+      if (allowed) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error(`CORS blocked: ${origin}`));
       }
     },
     credentials: true,
@@ -32,7 +36,7 @@ app.use(express.json());
 
 // Health check
 app.get("/", (req, res) => {
-  res.json({ message: "TravelLoop API Running 🚀" });
+  res.json({ message: "TravelLoop API Running 🚀", status: "ok" });
 });
 
 // Routes
