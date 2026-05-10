@@ -1,8 +1,5 @@
 -- TravelLoop AI — Database Schema
--- Run this in your Aiven / Railway MySQL console
-
-CREATE DATABASE IF NOT EXISTS travelloop;
-USE travelloop;
+-- Railway MySQL: database is already 'railway', no need to create one
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
