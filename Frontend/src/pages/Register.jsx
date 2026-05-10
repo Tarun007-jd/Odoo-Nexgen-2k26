@@ -1,50 +1,96 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import Navbar from "../components/Navbar";
+import { Link, useNavigate } from "react-router-dom";
+import { registerUser } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 
 function Register() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await registerUser({ name, email, password });
+      login(res.data.token, res.data.user);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-5">
-
       <motion.div
-        initial={{ opacity:0, scale:0.8 }}
-        animate={{ opacity:1, scale:1 }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
         className="bg-slate-900 border border-slate-800 rounded-3xl p-10 w-full max-w-md shadow-2xl"
       >
-
         <h1 className="text-4xl font-bold text-white text-center mb-8">
           Create Account 🚀
         </h1>
 
-        <form className="space-y-5">
+        {error && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl p-4 mb-6 text-center"
+          >
+            {error}
+          </motion.div>
+        )}
 
+        <form onSubmit={handleSubmit} className="space-y-5">
           <input
             type="text"
             placeholder="Full Name"
-            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400 transition"
           />
-
           <input
             type="email"
             placeholder="Email Address"
-            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400 transition"
           />
-
           <input
             type="password"
             placeholder="Password"
-            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full p-4 rounded-xl bg-slate-800 text-white outline-none border border-slate-700 focus:border-cyan-400 transition"
           />
-
           <button
-            className="w-full bg-cyan-500 hover:bg-cyan-600 transition p-4 rounded-xl text-lg font-semibold text-white"
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:scale-105 disabled:opacity-50 disabled:scale-100 transition p-4 rounded-xl text-lg font-semibold text-white"
           >
-            Register
+            {loading ? "Creating Account..." : "Register ✨"}
           </button>
-
         </form>
 
+        <p className="text-slate-400 text-center mt-6">
+          Already have an account?{" "}
+          <Link to="/login" className="text-cyan-400 hover:underline ml-1">
+            Login
+          </Link>
+        </p>
       </motion.div>
-
     </div>
   );
 }
