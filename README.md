@@ -77,6 +77,7 @@ Odoo-Nexgen-2k26-master/
 └── README.md
 
 ⚙️ Installation Guide
+
 1. Clone Repository
 git clone https://github.com/your-username/Odoo-Nexgen-2k26.git
 
@@ -84,15 +85,14 @@ git clone https://github.com/your-username/Odoo-Nexgen-2k26.git
 cd Frontend
 npm install
 npm run dev
-Frontend Server
-http://localhost:5173
 
 ▶️ Backend Setup
 cd Backend
 npm install
 node server.js
 Backend Server
-http://localhost:5000
+
+
 🔌 API Documentation
 Generate Travel Plan
 Endpoint
